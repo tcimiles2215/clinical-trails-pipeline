@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+import sqlite3
 
 conditions = 'diabetes'
 url = "https://clinicaltrials.gov/api/v2/studies"
@@ -19,5 +20,10 @@ for study in studies:
         'title': title,
         'status': status
     })
-df = pd.DataFrame(rows)
-print(df)
+    df = pd.DataFrame(rows)
+    
+    conn = sqlite3.connect('clinicaltrials.db')
+    df.to_sql('trials', conn, if_exists='replace', index=False)
+    conn.close()
+
+print('saved', len(df), 'trails to the database.')
